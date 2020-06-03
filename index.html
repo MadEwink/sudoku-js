@@ -2,11 +2,27 @@
 <html>
 	<head>
 		<title>Sudoku javascript game</title>
+		<link href="/style.css" rel="stylesheet">
 		<script src="/game/grid.js"></script>
 	</head>
 	<body>
 		<h1>Placeholder site</h1>
 		<p>Sudoku coming soon (hopefully)</p>
-		<svg id="grid" onload=grid.generate_grid()></svg>
+		<div id="game-area">
+			<svg id="grid" onload=grid.generate_grid()></svg>
+			<div id="buttons">
+				<div id="selection">
+					<button onclick=grid.onSelectClick()>Select</button>
+					<button onclick=grid.onUnSelectClick()>Unselect</button>
+				</div>
+				<div id="arrows">
+					<button onclick=grid.decrement_cursor_x()><</button>
+					<button onclick=grid.increment_cursor_x()>></button>
+					<button onclick=grid.decrement_cursor_y()>^</button>
+					<button onclick=grid.increment_cursor_y()>v</button>
+				</div>
+				<div id="numbers"></div>
+			</div>
+		</div>
 	</body>
 </html>

@@ -1,6 +1,18 @@
+// TODO
+//
+// Highlight all instances of a number, and it's possible places
+
 // check if digit in 1..max, useful for cell possible values (for fill, 0 is valid however) and for grid boundaries
 function check_digit(digit, max) {
 	return !(digit < 1 || digit > max)
+}
+
+function test() {
+	grid.fill_cell(grid.cursor_pos[0]+1,grid.cursor_pos[1]+1, 1);
+}
+
+function move() {
+	grid.cursor_pos[0] = 1;
 }
 
 class Cell {
@@ -59,8 +71,14 @@ class Grid {
 				this.cells[x][y] = new Cell(this.max)
 			}
 		}
+		// cursor
+		this.cursor_pos = new Array(1,1);
 		// selected cells
-		this.selection = new Array()
+		this.selection = new Array();
+		// HTML / SVG related
+		this.cell_width = 10;
+		this.uri = "http://www.w3.org/2000/svg"
+
 	}
 	
 	/*=====================
@@ -88,6 +106,43 @@ class Grid {
 		if (!(check_digit(x,this.max) && check_digit(y,this.max)))
 			return
 		this.cells[x-1][y-1].toggle_center(digit)
+	}
+
+	/*========================
+	 * Cursor related actions
+	 *========================
+	 */
+
+	set_cursor_pos(x,y) {
+		if (!(check_digit(x,this.max) && check_digit(y,this.max)))
+			return
+		this.cursor_pos[0] = x;
+		this.cursor_pos[1] = y;
+		this.updateCursorPos();
+	}
+	increment_cursor_x() {
+		this.cursor_pos[0] += 1;
+		if (this.cursor_pos[0] > this.max)
+			this.cursor_pos[0] = 1
+		this.updateCursorPos();
+	}
+	decrement_cursor_x() {
+		this.cursor_pos[0] -= 1;
+		if (this.cursor_pos[0] < 1)
+			this.cursor_pos[0] = this.max
+		this.updateCursorPos();
+	}
+	increment_cursor_y() {
+		this.cursor_pos[1] += 1;
+		if (this.cursor_pos[1] > this.max)
+			this.cursor_pos[1] = 1
+		this.updateCursorPos();
+	}
+	decrement_cursor_y() {
+		this.cursor_pos[1] -= 1;
+		if (this.cursor_pos[1] < 1)
+			this.cursor_pos[1] = this.max
+		this.updateCursorPos();
 	}
 
 	/*===========================
@@ -217,15 +272,11 @@ class Grid {
 	 *==============
 	 */
 	generate_grid() {
-		var cell_width = 10;
-
-		var uri = "http://www.w3.org/2000/svg"
-
 		var svg_grid = document.getElementById("grid");
-		var viewbox = "" + (-cell_width) + " " + (-cell_width) + " " + (cell_width*(this.width+2)) + " " + (cell_width*(this.height+2));
+		var viewbox = "" + (-this.cell_width) + " " + (-this.cell_width) + " " + (this.cell_width*(this.width+2)) + " " + (this.cell_width*(this.height+2));
 		svg_grid.setAttribute("viewBox", viewbox);
 
-		var g_element = document.createElementNS(uri,'g');
+		var g_element = document.createElementNS(this.uri,'g');
 		g_element.setAttribute("id","cells");
 		g_element.setAttribute("fill", "white");
 		g_element.setAttribute("stroke", "black");
@@ -233,40 +284,107 @@ class Grid {
 
 		for (var y = 1 ; y <= this.height ; y++) {
 			for (var x = 1 ; x <= this.width ; x++) {
-				var rect_element = document.createElementNS(uri,'rect');
+				var rect_element = document.createElementNS(this.uri,'rect');
 				var id = "" + x + "," + y;
 				rect_element.setAttribute("id", id);
 				rect_element.setAttribute("onclick", "grid.onCellClick(id)");
-				rect_element.setAttribute("x", cell_width*(x-1));
-				rect_element.setAttribute("y", cell_width*(y-1));
-				rect_element.setAttribute("width", cell_width);
-				rect_element.setAttribute("height", cell_width);
+				rect_element.setAttribute("x", this.cell_width*(x-1));
+				rect_element.setAttribute("y", this.cell_width*(y-1));
+				rect_element.setAttribute("width", this.cell_width);
+				rect_element.setAttribute("height", this.cell_width);
 				g_element.appendChild(rect_element);
 			}
 		}
 		svg_grid.appendChild(g_element);
-		var g_element = document.createElementNS(uri, 'g');
+		var g_element = document.createElementNS(this.uri, 'g');
 		g_element.setAttribute("fill", "none");
 		g_element.setAttribute("stroke", "black");
 		g_element.setAttribute("stroke-width", "0.5");
 		// 3x3 cells
 		for (var x = 0 ; x < (this.width/3) ; x++) {
 			for (var y = 0 ; y < (this.height/3) ; y++) {
-				var rect_element = document.createElementNS(uri,'rect');
-				rect_element.setAttribute("x", 3*cell_width*x);
-				rect_element.setAttribute("y", 3*cell_width*y);
-				rect_element.setAttribute("width", 3*cell_width);
-				rect_element.setAttribute("height", 3*cell_width);
+				var rect_element = document.createElementNS(this.uri,'rect');
+				rect_element.setAttribute("x", 3*this.cell_width*x);
+				rect_element.setAttribute("y", 3*this.cell_width*y);
+				rect_element.setAttribute("width", 3*this.cell_width);
+				rect_element.setAttribute("height", 3*this.cell_width);
 				g_element.appendChild(rect_element);
 			}
 		}
 		svg_grid.appendChild(g_element);
+		
+		// cursor
+		var g_element = document.createElementNS(this.uri, 'g');
+		g_element.setAttribute("id", "cursor");
+		g_element.setAttribute("fill", "none");
+		g_element.setAttribute("stroke", "blue");
+
+		// top left corner
+		var polyline_element = document.createElementNS(this.uri, "polyline");
+		var points = "0," + (this.cell_width/3) + " " + "0,0 " + (this.cell_width/3) + ",0";
+		polyline_element.setAttribute("points", points);
+		g_element.appendChild(polyline_element);
+
+		// top right corner
+		var polyline_element = document.createElementNS(this.uri, "polyline");
+		var points = "" + (2*this.cell_width/3) + ",0 " + (this.cell_width) + ",0 " + (this.cell_width) + "," + (this.cell_width/3);
+		polyline_element.setAttribute("points", points);
+		g_element.appendChild(polyline_element);
+
+		// bottom right corner
+		var polyline_element = document.createElementNS(this.uri, "polyline");
+		var points = "" + (2*this.cell_width/3) + "," + (this.cell_width) + " " + (this.cell_width) + "," + (this.cell_width) + " " + (this.cell_width) + "," + (2*this.cell_width/3);
+		polyline_element.setAttribute("points", points);
+		g_element.appendChild(polyline_element);
+
+		// bottom left corner
+		var polyline_element = document.createElementNS(this.uri, "polyline");
+		var points = "" + (this.cell_width/3) + "," + (this.cell_width) + " 0," + (this.cell_width) + " 0," + (2*this.cell_width/3);
+		polyline_element.setAttribute("points", points);
+		g_element.appendChild(polyline_element);
+
+		svg_grid.appendChild(g_element);
+
+		// numbers buttons
+		
+		var div_element = document.getElementById("numbers");
+		for (var i = 0 ; i <= this.max ; i++)
+		{
+			var button_element = document.createElement("button");
+			button_element.innerHTML = i;
+			button_element.setAttribute("onclick", "grid.onButtonClick(innerHTML)");
+			div_element.appendChild(button_element);
+		}
 	}
 
 	onCellClick(cell_id) {
 		var index_comma = cell_id.indexOf(',');
-		var x = cell_id.slice(0,index_comma);
-		var y = cell_id.slice(index_comma+1, cell_id.length);
+		var x = 1*cell_id.slice(0,index_comma);
+		var y = 1*cell_id.slice(index_comma+1, cell_id.length);
+		this.set_cursor_pos(x,y);
+	}
+
+	onButtonClick(id) {
+		var digit = id*1;
+		if (this.selection.length) {
+			this.fill_selected(digit)
+		}
+		else {
+			this.fill_cell(this.cursor_pos[0], this.cursor_pos[1], digit);
+		}
+	}
+
+	onSelectClick() {
+		this.add_cell_to_selection(this.cursor_pos[0], this.cursor_pos[1])
+	}
+
+	onUnSelectClick() {
+		this.remove_cell_from_selection(this.cursor_pos[0], this.cursor_pos[1])
+	}
+
+	updateCursorPos() {
+		var cursor_element = document.getElementById("cursor");
+		cursor_element.setAttribute("transform", "translate(" + (this.cursor_pos[0]-1)*this.cell_width + " " + (this.cursor_pos[1]-1)*this.cell_width + ")" );
 	}
 }
 
