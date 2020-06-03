@@ -1,20 +1,9 @@
-// TODO
-//
-// Highlight all instances of a number, and it's possible places
-
 // check if digit in 1..max, useful for cell possible values (for fill, 0 is valid however) and for grid boundaries
 function check_digit(digit, max) {
 	return !(digit < 1 || digit > max)
 }
 
-function test() {
-	grid.fill_cell(grid.cursor_pos[0]+1,grid.cursor_pos[1]+1, 1);
-}
-
-function move() {
-	grid.cursor_pos[0] = 1;
-}
-
+// Cell class : any cell of the grid
 class Cell {
 	// max : the maximum value of a digit
 	constructor(max) {
@@ -55,9 +44,13 @@ class Cell {
 	}
 }
 
+// Grid class : the grid, handling quite all the game, buttons generation, game logic, game display ; singleton pattern
 class Grid {
 
 	constructor(width=9, height=9, max=9) {
+		if (Grid.instance)
+			return Grid.instance;
+		Grid.instance = this;
 		this.max = max
 		this.width = width
 		this.height = height
@@ -80,7 +73,7 @@ class Grid {
 		this.uri = "http://www.w3.org/2000/svg"
 
 	}
-	
+
 	/*=====================
 	 * Single cell actions
 	 *=====================
@@ -91,21 +84,25 @@ class Grid {
 		if (!(check_digit(x,this.max) && check_digit(y,this.max)))
 			return
 		this.cells[x-1][y-1].fill(digit)
+		this.updateCell(x,y);
 	}
 	erase_cell(x,y) {
 		if (!(check_digit(x,this.max) && check_digit(y,this.max)))
 			return
 		this.cells[x-1][y-1].erase()
+		this.updateCell(x,y);
 	}
 	toggle_cell_corner(x,y,digit) {
 		if (!(check_digit(x,this.max) && check_digit(y,this.max)))
 			return
 		this.cells[x-1][y-1].toggle_corner(digit)
+		this.updateCell(x,y);
 	}
 	toggle_cell_center(x,y,digit) {
 		if (!(check_digit(x,this.max) && check_digit(y,this.max)))
 			return
 		this.cells[x-1][y-1].toggle_center(digit)
+		this.updateCell(x,y);
 	}
 
 	/*========================
@@ -154,15 +151,23 @@ class Grid {
 		// if cell already in selection do nothing
 		for (var coord in this.selection) {
 			if (coord[0] == x && coord[1] == y)
-				return
+				return;
 		}
 		this.selection.push([x,y])
 	}
 	remove_cell_from_selection(x,y) {
 		for (var i = 0 ; i < this.selection.length ; i++) {
 			if (this.selection[i][0] == x && this.selection[i][1] == y)
+			{
 				this.selection.splice(i)
+				return true;
+			}
 		}
+		return false;
+	}
+	toggle_cell_selection(x,y) {
+		if (!this.remove_cell_from_selection(x,y))
+			this.add_cell_to_selection(x,y);
 	}
 	empty_selection() {
 		this.selection = new Array()
@@ -275,6 +280,7 @@ class Grid {
 		var svg_grid = document.getElementById("grid");
 		var viewbox = "" + (-this.cell_width) + " " + (-this.cell_width) + " " + (this.cell_width*(this.width+2)) + " " + (this.cell_width*(this.height+2));
 		svg_grid.setAttribute("viewBox", viewbox);
+		document.addEventListener("keydown", onKeyDown);
 
 		var g_element = document.createElementNS(this.uri,'g');
 		g_element.setAttribute("id","cells");
@@ -287,7 +293,7 @@ class Grid {
 				var rect_element = document.createElementNS(this.uri,'rect');
 				var id = "" + x + "," + y;
 				rect_element.setAttribute("id", id);
-				rect_element.setAttribute("onclick", "grid.onCellClick(id)");
+				rect_element.setAttribute("onclick", "Grid.instance.onCellClick(id)");
 				rect_element.setAttribute("x", this.cell_width*(x-1));
 				rect_element.setAttribute("y", this.cell_width*(y-1));
 				rect_element.setAttribute("width", this.cell_width);
@@ -345,14 +351,59 @@ class Grid {
 
 		svg_grid.appendChild(g_element);
 
+		// Numbers
+
+		var g_element = document.createElementNS(this.uri, 'g');
+		g_element.setAttribute("id", "numbers");
+		g_element.setAttribute("fill", "black");
+
+		var g_fill = document.createElementNS(this.uri, 'g');
+		g_fill.setAttribute("id", "fill");
+		var g_corner = document.createElementNS(this.uri, 'g');
+		g_corner.setAttribute("id", "corner");
+		var g_center = document.createElementNS(this.uri, 'g');
+		g_center.setAttribute("id", "center");
+
+		for (var x = 1 ; x <= this.max ; x++)
+		{
+			for (var y = 1 ; y <= this.max ; y++)
+			{
+				var text = document.createElementNS(this.uri, "text");
+				text.id = "fill" + x + "," + y;
+				text.setAttribute("x", this.cell_width*(x-1)+2);
+				text.setAttribute("y", this.cell_width*(y)-1);
+				text.setAttribute("style","font-size : 10px;");
+				g_fill.appendChild(text);
+				var text = document.createElementNS(this.uri, "text");
+				text.id = "corner" + x + "," + y;
+				text.setAttribute("x", this.cell_width*(x-1)+1);
+				text.setAttribute("y", this.cell_width*(y)-7);
+				text.setAttribute("textLength", 8);
+				text.setAttribute("style","font-size : 3px;");
+				g_corner.appendChild(text);
+				var text = document.createElementNS(this.uri, "text");
+				text.id = "center" + x + "," + y;
+				text.setAttribute("x", this.cell_width*(x-1)+4);
+				text.setAttribute("y", this.cell_width*(y)-4);
+				text.setAttribute("style","font-size : 3px;");
+				g_center.appendChild(text);
+			}
+		}
+
+		g_element.appendChild(g_fill);
+		g_element.appendChild(g_corner);
+		g_element.appendChild(g_center);
+
+		svg_grid.appendChild(g_element);
+
 		// numbers buttons
 		
-		var div_element = document.getElementById("numbers");
+		var div_element = document.getElementById("numbers-buttons");
 		for (var i = 0 ; i <= this.max ; i++)
 		{
 			var button_element = document.createElement("button");
 			button_element.innerHTML = i;
-			button_element.setAttribute("onclick", "grid.onButtonClick(innerHTML)");
+			button_element.setAttribute("onclick", "Grid.instance.onButtonNumberPress(innerHTML)");
 			div_element.appendChild(button_element);
 		}
 	}
@@ -364,7 +415,7 @@ class Grid {
 		this.set_cursor_pos(x,y);
 	}
 
-	onButtonClick(id) {
+	onButtonNumberPress(id) {
 		var digit = id*1;
 		if (this.selection.length) {
 			this.fill_selected(digit)
@@ -374,18 +425,96 @@ class Grid {
 		}
 	}
 
-	onSelectClick() {
+	onButtonSelect() {
 		this.add_cell_to_selection(this.cursor_pos[0], this.cursor_pos[1])
 	}
 
-	onUnSelectClick() {
+	onButtonUnselect() {
 		this.remove_cell_from_selection(this.cursor_pos[0], this.cursor_pos[1])
+	}
+
+	onButtonToggleSelect() {
+		this.toggle_cell_selection(this.cursor_pos[0], this.cursor_pos[1]);
 	}
 
 	updateCursorPos() {
 		var cursor_element = document.getElementById("cursor");
 		cursor_element.setAttribute("transform", "translate(" + (this.cursor_pos[0]-1)*this.cell_width + " " + (this.cursor_pos[1]-1)*this.cell_width + ")" );
 	}
+
+	updateCell(x,y) {
+		if (!(check_digit(x) && check_digit(y)))
+			return
+		var cell_info = this.cells[x-1][y-1];
+		var id = "" + x + "," + y;
+		var fill_element = document.getElementById("fill"+id);
+		var corner_element = document.getElementById("corner"+id);
+		var center_element = document.getElementById("center"+id);
+		corner_element.innerHTML = "";
+		center_element.innerHTML = "";
+		if (cell_info.value != 0) {
+			fill_element.innerHTML = cell_info.value;
+		}
+		else {
+			fill_element.innerHTML = "";
+			for (var i = 0 ; i < cell_info.corner_indicators.length ; i++) {
+				if (cell_info.corner_indicators[i]) {
+					corner_element.innerHTML += (i+1);
+				}
+			}
+			var dx = 1;
+			for (var i = 0 ; i < cell_info.center_indicators.length ; i++) {
+				if (cell_info.center_indicators[i]) {
+					center_element.innerHTML += (i+1);
+					dx --;
+				}
+				center_element.setAttribute("dx",dx);
+			}
+		}
+	}
 }
+
+function onKeyDown(event_key) {
+	switch (event_key.key) {
+		case "ArrowRight":
+			Grid.instance.increment_cursor_x();
+			event_key.preventDefault();
+			return;
+		case "ArrowLeft":
+			Grid.instance.decrement_cursor_x();
+			event_key.preventDefault();
+			return;
+		case "ArrowDown":
+			Grid.instance.increment_cursor_y();
+			event_key.preventDefault();
+			return;
+		case "ArrowUp":
+			Grid.instance.decrement_cursor_y();
+			event_key.preventDefault();
+			return;
+		case " ":
+			event_key.preventDefault();
+			Grid.instance.onButtonToggleSelect();
+		default:
+			break;
+	}
+	for (var i = 48 ; i <= 57 ; i++)
+	{
+		if (event_key.keyCode == i) {
+			Grid.instance.onButtonNumberPress(i-48);
+			event_key.preventDefault();
+			return;
+		}
+	}
+	// TODO : handle letters if max over 9
+	for (var i = 0 ; i <= Grid.instance.max ; i++) {
+		if (event_key.key == i) {
+			Grid.instance.onButtonNumberPress(i);
+			event_key.preventDefault();
+			return;
+		}
+	}
+}
+
 
 var grid = new Grid

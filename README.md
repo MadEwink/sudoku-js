@@ -8,9 +8,9 @@ This project consist in a frontend-only sudoku game. The goal is to have a fully
 - [ ] Interface
  - [x] Grid generation
  - [x] Cursor
- - [ ] Filled numbers
- - [ ] Corner annotated numbers
- - [ ] Center annotated numbers
+ - [x] Filled numbers
+ - [x] Corner annotated numbers
+ - [x] Center annotated numbers
  - [ ] Mouse support
  - [ ] Keyboard support
 - [ ] Style
@@ -18,6 +18,12 @@ This project consist in a frontend-only sudoku game. The goal is to have a fully
  - [ ] Define or find basic description format
  - [ ] Parser
 - [ ] Additional rules
+- [ ] History system
+ - [ ] Write actions
+ - [ ] Undo / Redo
+- [ ] Help system
+ - [ ] Highlight all instances of a number and it's possible positions
+ - [ ] Highlight the cells a selected cell blocks
 
 ## About the project
 

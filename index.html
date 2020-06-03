@@ -7,21 +7,21 @@
 	</head>
 	<body>
 		<h1>Placeholder site</h1>
-		<p>Sudoku coming soon (hopefully)</p>
+		<p>Sudoku coming soon (in progress)</p>
 		<div id="game-area">
-			<svg id="grid" onload=grid.generate_grid()></svg>
+			<svg id="grid" onload=Grid.instance.generate_grid()></svg>
 			<div id="buttons">
 				<div id="selection">
-					<button onclick=grid.onSelectClick()>Select</button>
-					<button onclick=grid.onUnSelectClick()>Unselect</button>
+					<button onclick=Grid.instance.onSelectClick()>Select</button>
+					<button onclick=Grid.instance.onUnSelectClick()>Unselect</button>
 				</div>
 				<div id="arrows">
-					<button onclick=grid.decrement_cursor_x()><</button>
-					<button onclick=grid.increment_cursor_x()>></button>
-					<button onclick=grid.decrement_cursor_y()>^</button>
-					<button onclick=grid.increment_cursor_y()>v</button>
+					<button onclick=Grid.instance.decrement_cursor_x()><</button>
+					<button onclick=Grid.instance.increment_cursor_x()>></button>
+					<button onclick=Grid.instance.decrement_cursor_y()>^</button>
+					<button onclick=Grid.instance.increment_cursor_y()>v</button>
 				</div>
-				<div id="numbers"></div>
+				<div id="numbers-buttons"></div>
 			</div>
 		</div>
 	</body>
