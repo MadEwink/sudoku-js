@@ -5,25 +5,35 @@ This project consist in a frontend-only sudoku game. The goal is to have a fully
 ## Todo list
 
 - [x] Sudoku game logic
-- [ ] Interface
- - [x] Grid generation
- - [x] Cursor
- - [x] Filled numbers
- - [x] Corner annotated numbers
- - [x] Center annotated numbers
- - [ ] Mouse support
- - [ ] Keyboard support
-- [ ] Style
-- [ ] Load Sudoku from file
- - [ ] Define or find basic description format
- - [ ] Parser
-- [ ] Additional rules
-- [ ] History system
- - [ ] Write actions
- - [ ] Undo / Redo
-- [ ] Help system
- - [ ] Highlight all instances of a number and it's possible positions
- - [ ] Highlight the cells a selected cell blocks
+
+Interface
+- [x] Grid generation
+- [x] Cursor
+- [x] Filled numbers
+- [x] Corner annotated numbers
+- [x] Center annotated numbers
+- [ ] Mouse support
+- [ ] Keyboard support
+
+Style
+- [ ] Grid size
+- [ ] Buttons layout
+- [ ] Overall site look
+
+Load Sudoku from file
+- [ ] Define or find basic description format
+- [ ] Parser
+
+Additional rules
+- [ ] Define tasks to add rules
+
+History system
+- [ ] Write actions
+- [ ] Undo / Redo
+
+Help system
+- [ ] Highlight all instances of a number and it's possible positions
+- [ ] Highlight the cells a selected cell blocks
 
 ## About the project
 
