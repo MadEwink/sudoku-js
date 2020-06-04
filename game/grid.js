@@ -71,7 +71,10 @@ class Grid {
 		// HTML / SVG related
 		this.cell_width = 10;
 		this.uri = "http://www.w3.org/2000/svg"
-
+		// input related
+		this.current_fill_mode = "fill"; // fill | corner | center
+		this.temporary_corner = false;
+		this.temporary_center = false;
 	}
 
 	/*=====================
@@ -281,6 +284,7 @@ class Grid {
 		var viewbox = "" + (-this.cell_width) + " " + (-this.cell_width) + " " + (this.cell_width*(this.width+2)) + " " + (this.cell_width*(this.height+2));
 		svg_grid.setAttribute("viewBox", viewbox);
 		document.addEventListener("keydown", onKeyDown);
+		document.addEventListener("keyup", onKeyUp);
 
 		var g_element = document.createElementNS(this.uri,'g');
 		g_element.setAttribute("id","cells");
@@ -418,10 +422,20 @@ class Grid {
 	onButtonNumberPress(id) {
 		var digit = id*1;
 		if (this.selection.length) {
-			this.fill_selected(digit)
+			if (this.current_fill_mode == "corner" || this.temporary_corner)
+				this.toggle_corner_selected(digit);
+			else if (this.current_fill_mode == "center" || this.temporary_center)
+				this.toggle_center_selected(digit);
+			else
+				this.fill_selected(digit)
 		}
 		else {
-			this.fill_cell(this.cursor_pos[0], this.cursor_pos[1], digit);
+			if (this.current_fill_mode == "corner" || this.temporary_corner)
+				this.toggle_cell_corner(this.cursor_pos[0], this.cursor_pos[1], digit);
+			else if (this.current_fill_mode == "center" || this.temporary_center)
+				this.toggle_cell_center(this.cursor_pos[0], this.cursor_pos[1], digit);
+			else
+				this.fill_cell(this.cursor_pos[0], this.cursor_pos[1], digit);
 		}
 	}
 
@@ -474,6 +488,19 @@ class Grid {
 	}
 }
 
+function onKeyUp(event_key) {
+	switch (event_key.key) {
+		case "Shift":
+			Grid.instance.temporary_corner = false;
+			return;
+		case "Control":
+			Grid.instance.temporary_center = false;
+			return;
+		default:
+			break;
+	}
+}
+
 function onKeyDown(event_key) {
 	switch (event_key.key) {
 		case "ArrowRight":
@@ -495,6 +522,13 @@ function onKeyDown(event_key) {
 		case " ":
 			event_key.preventDefault();
 			Grid.instance.onButtonToggleSelect();
+			return;
+		case "Shift":
+			Grid.instance.temporary_corner = true;
+			return;
+		case "Control":
+			Grid.instance.temporary_center = true;
+			return;
 		default:
 			break;
 	}

@@ -13,10 +13,12 @@ Interface
 - [x] Corner annotated numbers
 - [x] Center annotated numbers
 - [ ] Mouse support
-- [ ] Keyboard support
+- [x] Keyboard support
+- [ ] Selection feedback
+- [ ] Prevent text from blocking click
 
 Style
-- [ ] Grid size
+- [ ] Grid size on page
 - [ ] Buttons layout
 - [ ] Overall site look
 
