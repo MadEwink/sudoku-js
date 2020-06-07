@@ -439,6 +439,21 @@ class Grid {
 		}
 	}
 
+	onButtonSwitchMode() {
+		switch (this.current_fill_mode) {
+			case "fill":
+				this.current_fill_mode = "corner";
+				break;
+			case "corner":
+				this.current_fill_mode = "center";
+				break;
+			case "center":
+			default:
+				this.current_fill_mode = "fill";
+				break;
+		}
+	}
+
 	onButtonSelect() {
 		this.add_cell_to_selection(this.cursor_pos[0], this.cursor_pos[1])
 	}
@@ -529,6 +544,8 @@ function onKeyDown(event_key) {
 		case "Control":
 			Grid.instance.temporary_center = true;
 			return;
+		case "Tab":
+			Grid.instance.onButtonSwitchMode();
 		default:
 			break;
 	}
