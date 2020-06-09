@@ -23,8 +23,9 @@ Style
 - [ ] Overall site look
 
 Load Sudoku from file
-- [ ] Define or find basic description format
-- [ ] Parser
+- [x] Define or find basic description format
+- [x] Parser
+- [ ] Writable additional rules
 
 Additional rules
 - [ ] Define tasks to add rules

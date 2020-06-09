@@ -75,6 +75,12 @@ class Grid {
 		this.current_fill_mode = "fill"; // fill | corner | center
 		this.temporary_corner = false;
 		this.temporary_center = false;
+		// load grid content from file
+		var regex = new RegExp("[?&]id="+"([^&#]*)|&|#|$");
+		var id = regex.exec(window.location.href);
+		if (!id) return;
+		if (!id[1]) return;
+		this.loadGridFromFile(id[1]);
 	}
 
 	/*=====================
@@ -85,25 +91,30 @@ class Grid {
 	// fill the cell in x,y (where 1,1 is top left and 9,9 is down right) with digit
 	fill_cell(x,y,digit) {
 		if (!(check_digit(x,this.max) && check_digit(y,this.max)))
-			return
+			return;
 		this.cells[x-1][y-1].fill(digit)
 		this.updateCell(x,y);
 	}
+	set_editable(x,y,editable) {
+		if (!(check_digit(x,this.max) && check_digit(y,this.max)))
+			return;
+		this.cells[x-1][y-1].is_editable = editable;
+	}
 	erase_cell(x,y) {
 		if (!(check_digit(x,this.max) && check_digit(y,this.max)))
-			return
+			return;
 		this.cells[x-1][y-1].erase()
 		this.updateCell(x,y);
 	}
 	toggle_cell_corner(x,y,digit) {
 		if (!(check_digit(x,this.max) && check_digit(y,this.max)))
-			return
+			return;
 		this.cells[x-1][y-1].toggle_corner(digit)
 		this.updateCell(x,y);
 	}
 	toggle_cell_center(x,y,digit) {
 		if (!(check_digit(x,this.max) && check_digit(y,this.max)))
-			return
+			return;
 		this.cells[x-1][y-1].toggle_center(digit)
 		this.updateCell(x,y);
 	}
@@ -501,6 +512,39 @@ class Grid {
 			}
 		}
 	}
+
+	/*===========
+	 * Load game
+	 *===========
+	 */
+
+	loadGridFromFile(file)
+	{
+		var xhr = new XMLHttpRequest();
+		xhr.open("GET", "./grid_files/" + file + ".xml");
+		xhr.responseType = "document";
+		xhr.overrideMimeType("text/xml");
+		xhr.onload = function ()
+		{
+			if(xhr.readyState === xhr.DONE && xhr.status == 200)
+			{
+				var xml = xhr.responseXML;
+				var xml_grid = xml.children[0];
+				for (var i = 0 ; i < xml_grid.children.length ; i++)
+				{
+					var current_element = xml_grid.children[i];
+					if (current_element.nodeName == "cell") {
+						var x = current_element.attributes.x.value;
+						var y = current_element.attributes.y.value;
+						var value = 1*current_element.textContent;
+						Grid.instance.fill_cell(x,y,value);
+						Grid.instance.set_editable(x,y,false);
+					}
+				}
+			}
+		}
+		xhr.send();
+	}
 }
 
 function onKeyUp(event_key) {
@@ -566,6 +610,5 @@ function onKeyDown(event_key) {
 		}
 	}
 }
-
 
 var grid = new Grid
