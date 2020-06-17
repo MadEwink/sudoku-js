@@ -17,6 +17,10 @@ Interface
 - [ ] Selection feedback
 - [ ] Prevent text from blocking click
 
+Persistance
+- [ ] Write temporary data in cookie
+- [ ] Load data from cookie
+
 Style
 - [ ] Grid size on page
 - [ ] Buttons layout
