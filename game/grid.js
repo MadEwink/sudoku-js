@@ -168,12 +168,14 @@ class Grid {
 				return;
 		}
 		this.selection.push([x,y])
+		this.updateCellSelected(x,y,true);
 	}
 	remove_cell_from_selection(x,y) {
 		for (var i = 0 ; i < this.selection.length ; i++) {
 			if (this.selection[i][0] == x && this.selection[i][1] == y)
 			{
-				this.selection.splice(i)
+				this.selection.splice(i,1);
+				this.updateCellSelected(x,y,false);
 				return true;
 			}
 		}
@@ -184,6 +186,8 @@ class Grid {
 			this.add_cell_to_selection(x,y);
 	}
 	empty_selection() {
+		for (var coord in this.selection)
+			updateCellSelected(coord[0],coord[1],false);
 		this.selection = new Array()
 	}
 	fill_selected(digit) {
@@ -511,6 +515,14 @@ class Grid {
 				center_element.setAttribute("dx",dx);
 			}
 		}
+	}
+
+	updateCellSelected(x,y,selected) {
+		if (!(check_digit(x) && check_digit(y)))
+			return
+		var id = "" + x + "," + y;
+		var cell_element = document.getElementById(id);
+		cell_element.setAttribute("fill",selected ? "#FFFF0088" : "#FFFFFF");
 	}
 
 	/*===========

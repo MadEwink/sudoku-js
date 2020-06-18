@@ -14,7 +14,7 @@ Interface
 - [x] Center annotated numbers
 - [ ] Mouse support
 - [x] Keyboard support
-- [ ] Selection feedback
+- [x] Selection feedback
 - [ ] Prevent text from blocking click
 
 Persistance
@@ -25,6 +25,7 @@ Style
 - [ ] Grid size on page
 - [ ] Buttons layout
 - [ ] Overall site look
+- [ ] Dark/Light modes
 
 Load Sudoku from file
 - [x] Define or find basic description format
