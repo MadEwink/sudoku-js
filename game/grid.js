@@ -186,8 +186,8 @@ class Grid {
 			this.add_cell_to_selection(x,y);
 	}
 	empty_selection() {
-		for (var coord in this.selection)
-			updateCellSelected(coord[0],coord[1],false);
+		for (var i = 0 ; i < this.selection.length ; i++)
+			this.updateCellSelected(this.selection[i][0],this.selection[i][1],false);
 		this.selection = new Array()
 	}
 	fill_selected(digit) {
@@ -476,6 +476,10 @@ class Grid {
 	onButtonUnselect() {
 		this.remove_cell_from_selection(this.cursor_pos[0], this.cursor_pos[1])
 	}
+	
+	onButtonEmptySelection() {
+		this.empty_selection();
+	}
 
 	onButtonToggleSelect() {
 		this.toggle_cell_selection(this.cursor_pos[0], this.cursor_pos[1]);
@@ -561,6 +565,9 @@ class Grid {
 
 function onKeyUp(event_key) {
 	switch (event_key.key) {
+		case " ":
+			event_key.preventDefault();
+			return;
 		case "Shift":
 			Grid.instance.temporary_corner = false;
 			return;

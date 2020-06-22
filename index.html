@@ -12,8 +12,9 @@
 			<svg id="grid" onload=Grid.instance.generate_grid()></svg>
 			<div id="buttons">
 				<div id="selection">
-					<button onclick=Grid.instance.onSelectClick()>Select</button>
-					<button onclick=Grid.instance.onUnSelectClick()>Unselect</button>
+					<button onclick=Grid.instance.onButtonSelect()>Select</button>
+					<button onclick=Grid.instance.onButtonUnselect()>Unselect</button>
+					<button onclick=Grid.instance.onButtonEmptySelection()>Unselect all</button>
 				</div>
 				<div id="arrows">
 					<button onclick=Grid.instance.decrement_cursor_x()><</button>
