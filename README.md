@@ -12,14 +12,16 @@ Interface
 - [x] Filled numbers
 - [x] Corner annotated numbers
 - [x] Center annotated numbers
-- [ ] Mouse support
+- [x] Mouse support
 - [x] Keyboard support
 - [x] Selection feedback
-- [ ] Prevent text from blocking click
+- [x] Prevent text from blocking click
+- [ ] Load random sudoku layout
+- [ ] List all available sudokus
 
 Persistance
-- [ ] Write temporary data in cookie
-- [ ] Load data from cookie
+- [ ] Write temporary data in cookie ?
+- [ ] Load data from cookie ?
 
 Style
 - [ ] Grid size on page

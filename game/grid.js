@@ -301,28 +301,10 @@ class Grid {
 		document.addEventListener("keydown", onKeyDown);
 		document.addEventListener("keyup", onKeyUp);
 
-		var g_element = document.createElementNS(this.uri,'g');
-		g_element.setAttribute("id","cells");
-		g_element.setAttribute("fill", "white");
-		g_element.setAttribute("stroke", "black");
-		g_element.setAttribute("stroke-width", "0.1");
+		// thick lines
 
-		for (var y = 1 ; y <= this.height ; y++) {
-			for (var x = 1 ; x <= this.width ; x++) {
-				var rect_element = document.createElementNS(this.uri,'rect');
-				var id = "" + x + "," + y;
-				rect_element.setAttribute("id", id);
-				rect_element.setAttribute("onclick", "Grid.instance.onCellClick(id)");
-				rect_element.setAttribute("x", this.cell_width*(x-1));
-				rect_element.setAttribute("y", this.cell_width*(y-1));
-				rect_element.setAttribute("width", this.cell_width);
-				rect_element.setAttribute("height", this.cell_width);
-				g_element.appendChild(rect_element);
-			}
-		}
-		svg_grid.appendChild(g_element);
 		var g_element = document.createElementNS(this.uri, 'g');
-		g_element.setAttribute("fill", "none");
+		g_element.setAttribute("fill", "white");
 		g_element.setAttribute("stroke", "black");
 		g_element.setAttribute("stroke-width", "0.5");
 		// 3x3 cells
@@ -413,6 +395,29 @@ class Grid {
 		g_element.appendChild(g_corner);
 		g_element.appendChild(g_center);
 
+		svg_grid.appendChild(g_element);
+
+		// selectable cells
+
+		var g_element = document.createElementNS(this.uri,'g');
+		g_element.setAttribute("id","cells");
+		g_element.setAttribute("fill", "#FFFFFF00");
+		g_element.setAttribute("stroke", "black");
+		g_element.setAttribute("stroke-width", "0.1");
+
+		for (var y = 1 ; y <= this.height ; y++) {
+			for (var x = 1 ; x <= this.width ; x++) {
+				var rect_element = document.createElementNS(this.uri,'rect');
+				var id = "" + x + "," + y;
+				rect_element.setAttribute("id", id);
+				rect_element.setAttribute("onclick", "Grid.instance.onCellClick(id)");
+				rect_element.setAttribute("x", this.cell_width*(x-1));
+				rect_element.setAttribute("y", this.cell_width*(y-1));
+				rect_element.setAttribute("width", this.cell_width);
+				rect_element.setAttribute("height", this.cell_width);
+				g_element.appendChild(rect_element);
+			}
+		}
 		svg_grid.appendChild(g_element);
 
 		// numbers buttons
@@ -526,7 +531,7 @@ class Grid {
 			return
 		var id = "" + x + "," + y;
 		var cell_element = document.getElementById(id);
-		cell_element.setAttribute("fill",selected ? "#FFFF0088" : "#FFFFFF");
+		cell_element.setAttribute("fill",selected ? "#FFFF0088" : "#FFFFFF00");
 	}
 
 	/*===========
