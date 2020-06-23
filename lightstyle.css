@@ -1,0 +1,24 @@
+* {
+	border-color: #ebebfa;
+	color: black;
+}
+
+body {
+	background-color : #9999e6;
+}
+
+a {
+	color: #800040;
+}
+
+header {
+	background-color: #c2c2f0;
+}
+
+button {
+	background-color: #7070db;
+}
+
+select {
+	background-color: #7070db;
+}

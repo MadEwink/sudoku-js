@@ -416,12 +416,21 @@ class Grid {
 		// numbers buttons
 
 		var div_element = document.getElementById("numbers-buttons");
-		for (var i = 0 ; i <= this.max ; i++) {
+		for (var i = 1 ; i <= this.max ; i++) {
 			var button_element = document.createElement("button");
 			button_element.innerHTML = i;
 			button_element.setAttribute("onclick", "Grid.instance.onButtonNumberPress(innerHTML)");
 			div_element.appendChild(button_element);
 		}
+		// text elements for spacing
+		var text_element = document.createElement("text");
+		div_element.appendChild(text_element);
+		var button_element = document.createElement("button");
+		button_element.innerHTML = 0;
+		button_element.setAttribute("onclick", "Grid.instance.onButtonNumberPress(innerHTML)");
+		div_element.appendChild(button_element);
+		var text_element = document.createElement("text");
+		div_element.appendChild(text_element);
 
 		// load buttons
 		

@@ -3,14 +3,41 @@
 	<head>
 		<title>Sudoku javascript game</title>
 		<link href="./style.css" rel="stylesheet">
+		<link href="./darkstyle.css" id="Dark-theme" title="Dark" rel="alternative stylesheet">
+		<link href="./lightstyle.css" id="Light-theme" title="Light" rel="alternative stylesheet">
+		<link rel="icon" href="/img/favicon.ico">
 		<script src="./game/grid.js"></script>
+		<script src="/js/theme.js"></script>
 	</head>
 	<body>
-		<h1>Sudoku javascript game</h1>
+		<header>
+			<div id ="nav">
+				<a href="/"><img id="nav-pp" src="/img/pp.png" alt="Profile picture"></a>
+				<br/>
+				<div id="nav-title">Sudoku javascript game</div>
+				<ul class="nav-links">
+					<li><a href="https://github.com/MadEwink">Github</a></li>
+					<li><a href="https://gitlab.com/MadEwink">Gitlab</a></li>
+					<li><a href="https://framagit.org/MadEwink">Framagit</a></li>
+				</ul>
+				<div id="nav-tail">
+					<div>
+						<button class="theme" id="light-theme-button" style="display:none" onClick="setLightTheme()">Switch to light theme</button>
+						<button class="theme" id="dark-theme-button" style="display:none" onClick="setDarkTheme()">Switch to dark theme</button>
+					</div>
+					<ul class="nav-links" id="nav-tail-links">
+						<li><a href="/">Home</a></li>
+						<li><a href="/projects">Projects</a></li>
+						<li><a href="/about.html">About</a></li>
+					</ul>
+				</div>
+			</div>
+		</header>
 		<p>Sudoku coming soon (in progress). Page style is one of the lowest priority tasks for now.</p>
 		<div id="game-area">
 			<svg id="grid" onload=Grid.instance.generate_grid()></svg>
 			<div id="buttons">
+				<h3>Cursor tools</h3>
 				<div id="selection">
 					<button onclick=Grid.instance.onButtonSelect()>Select</button>
 					<button onclick=Grid.instance.onButtonUnselect()>Unselect</button>
@@ -22,7 +49,9 @@
 					<button onclick=Grid.instance.decrement_cursor_y()>^</button>
 					<button onclick=Grid.instance.increment_cursor_y()>v</button>
 				</div>
+				<h3>Numbers</h3>
 				<div id="numbers-buttons"></div>
+				<h3>Load presets</h3>
 				<div id="load-buttons"></div>
 			</div>
 		</div>

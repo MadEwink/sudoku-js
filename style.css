@@ -1,4 +1,91 @@
+body {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	height: 100%;
+}
+@media (max-width: 1110px) {
+	body {
+		font-size: 2em;
+	}
+}
+
+header {
+	border-bottom-style: solid;
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+img#nav-pp {
+	border-style: solid;
+	border-radius: 75px;
+	width: 150px;
+	display: block;
+	margin-left: auto;
+  	margin-right: auto;
+}
+
+#nav-title {
+	text-align: center;
+	font-size: 2em;
+}
+
+#nav-tail {
+	display: grid;
+	grid-template-columns: auto max-content;
+}
+
+button.theme {
+	padding: 8px;
+	border-style: solid;
+	border-radius: 5px;
+}
+@media (max-width: 1110px) {
+	button.theme {
+		padding: 15px;
+		font-size: 1em;
+	}
+}
+
+ul.nav-links {
+	list-style-type: none;
+	text-align: right;
+}
+
+ul.nav-links > li {
+	font-size: 1.2em;
+	display: inline;
+	margin: 10px;
+}
+
+#nav-tail-links {
+	max-width: max-content;
+	margin: 5px;
+	padding: 10px;
+	border-style: solid;
+	border-radius: 50px;
+}
+
+#nav-tail-links li {
+	margin: 5px;
+}
+
+#nav-tail-links a {
+	text-decoration: none;
+}
+
 div#game-area {
 	display: grid;
 	grid-template-columns: auto auto;
+}
+
+div#numbers-buttons {
+	display: grid;
+	grid-template-columns: auto auto auto;
+	width: max-content;
+}
+
+div#numbers-buttons > button {
+	height: 5em;
+	width: 5em;
 }
