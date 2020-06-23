@@ -12,7 +12,7 @@ Interface
 - [x] Filled numbers
 - [x] Corner annotated numbers
 - [x] Center annotated numbers
-- [x] Mouse support
+- [ ] Mouse support
 - [x] Keyboard support
 - [x] Selection feedback
 - [x] Prevent text from blocking click

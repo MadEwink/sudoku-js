@@ -56,11 +56,9 @@ class Grid {
 		this.height = height
 		// cells array
 		this.cells = new Array(width)
-		for (var x = 0 ; x < width ; x++)
-		{
+		for (var x = 0 ; x < width ; x++) {
 			this.cells[x] = new Array(height)
-			for (var y = 0 ; y < height ; y++)
-			{
+			for (var y = 0 ; y < height ; y++) {
 				this.cells[x][y] = new Cell(this.max)
 			}
 		}
@@ -76,6 +74,7 @@ class Grid {
 		this.temporary_corner = false;
 		this.temporary_center = false;
 		// load grid content from file
+
 		var regex = new RegExp("[?&]id="+"([^&#]*)|&|#|$");
 		var id = regex.exec(window.location.href);
 		if (!id) return;
@@ -172,8 +171,7 @@ class Grid {
 	}
 	remove_cell_from_selection(x,y) {
 		for (var i = 0 ; i < this.selection.length ; i++) {
-			if (this.selection[i][0] == x && this.selection[i][1] == y)
-			{
+			if (this.selection[i][0] == x && this.selection[i][1] == y) {
 				this.selection.splice(i,1);
 				this.updateCellSelected(x,y,false);
 				return true;
@@ -219,13 +217,11 @@ class Grid {
 	// validate the solution according to classic sudoku rules
 	classic_validate() {
 		// check each column
-		for (var x = 0 ; x < this.width ; x++)
-		{
+		for (var x = 0 ; x < this.width ; x++) {
 			var found_digits = new Array(this.max)
 			for (var i = 0 ; i < this.max ; i++)
 				found_digits[i] = false;
-			for (var y = 0 ; y < this.height ; y++)
-			{
+			for (var y = 0 ; y < this.height ; y++) {
 				var digit = this.cells[x][y].value
 				// if incorrect number
 				if (!check_digit(digit,this.max))
@@ -242,13 +238,11 @@ class Grid {
 			}
 		}
 		// check each row
-		for (var y = 0 ; y < this.height ; y++)
-		{
+		for (var y = 0 ; y < this.height ; y++) {
 			var found_digits = new Array(this.max)
 			for (var i = 0 ; i < this.max ; i++)
 				found_digits[i] = false;
-			for (var x = 0 ; x < this.width ; x++)
-			{
+			for (var x = 0 ; x < this.width ; x++) {
 				var digit = this.cells[x][y].value
 				// if incorrect number
 				if (!check_digit(digit,this.max))
@@ -264,15 +258,12 @@ class Grid {
 			}
 		}
 		// check each square
-		for (var i = 0 ; i < (this.width/3)*(this.height/3) ; i++)
-		{
+		for (var i = 0 ; i < (this.width/3)*(this.height/3) ; i++) {
 			var found_digits = new Array(this.max)
 			for (var i = 0 ; i < this.max ; i++)
 				found_digits[i] = false;
-			for (var x = 3*(i%3) ; x < 3*((i%3)+1) ; x++)
-			{
-				for (var y = 3*Math.floor(i/3) ; y < 3*(Math.floor((i+1)/3)) ; y++)
-				{
+			for (var x = 3*(i%3) ; x < 3*((i%3)+1) ; x++) {
+				for (var y = 3*Math.floor(i/3) ; y < 3*(Math.floor((i+1)/3)) ; y++) {
 					var digit = this.cells[x][y].value
 					// if incorrect number
 					if (!check_digit(digit,this.max))
@@ -365,10 +356,8 @@ class Grid {
 		var g_center = document.createElementNS(this.uri, 'g');
 		g_center.setAttribute("id", "center");
 
-		for (var x = 1 ; x <= this.max ; x++)
-		{
-			for (var y = 1 ; y <= this.max ; y++)
-			{
+		for (var x = 1 ; x <= this.max ; x++) {
+			for (var y = 1 ; y <= this.max ; y++) {
 				var text = document.createElementNS(this.uri, "text");
 				text.id = "fill" + x + "," + y;
 				text.setAttribute("x", this.cell_width*(x-1)+2);
@@ -420,16 +409,42 @@ class Grid {
 		}
 		svg_grid.appendChild(g_element);
 
+		this.generate_buttons();
+	}
+
+	generate_buttons() {
 		// numbers buttons
-		
+
 		var div_element = document.getElementById("numbers-buttons");
-		for (var i = 0 ; i <= this.max ; i++)
-		{
+		for (var i = 0 ; i <= this.max ; i++) {
 			var button_element = document.createElement("button");
 			button_element.innerHTML = i;
 			button_element.setAttribute("onclick", "Grid.instance.onButtonNumberPress(innerHTML)");
 			div_element.appendChild(button_element);
 		}
+
+		// load buttons
+		
+		this.loadGridList();
+
+		var div_element = document.getElementById("load-buttons");
+		var button_element = document.createElement("button");
+		button_element.innerHTML = "Random preset grid";
+		button_element.setAttribute("onclick", "Grid.instance.onButtonRandomPreset()");
+		div_element.appendChild(button_element);
+		var select_element = document.createElement("select");
+		select_element.setAttribute("id", "grid-preset");
+		for (var i = 0 ; i < this.grids_infos.length ; i++) {
+			var option_element = document.createElement("option");
+			option_element.setAttribute("value", this.grids_infos[i][1]);
+			option_element.innerHTML = this.grids_infos[i][0];
+			select_element.appendChild(option_element);
+		}
+		div_element.appendChild(select_element);
+		var button_element = document.createElement("button");
+		button_element.innerHTML = "Load Selected";
+		button_element.setAttribute("onclick", "Grid.instance.onButtonLoadPreset()");
+		div_element.appendChild(button_element);
 	}
 
 	onCellClick(cell_id) {
@@ -490,6 +505,21 @@ class Grid {
 		this.toggle_cell_selection(this.cursor_pos[0], this.cursor_pos[1]);
 	}
 
+	onButtonRandomPreset() {
+		var i = Math.floor(Math.random() * this.grids_infos.length);
+		this.openPresetPage(i);
+	}
+
+	onButtonLoadPreset() {
+		var select_element = document.getElementById("grid-preset");
+		for (var i = 0 ; i < this.grids_infos.length ; i++) {
+			if (select_element.children[i].selected) {
+				this.openPresetPage(i);
+				return;
+			}
+		}
+	}
+
 	updateCursorPos() {
 		var cursor_element = document.getElementById("cursor");
 		cursor_element.setAttribute("transform", "translate(" + (this.cursor_pos[0]-1)*this.cell_width + " " + (this.cursor_pos[1]-1)*this.cell_width + ")" );
@@ -539,20 +569,16 @@ class Grid {
 	 *===========
 	 */
 
-	loadGridFromFile(file)
-	{
+	loadGridFromFile(file) {
 		var xhr = new XMLHttpRequest();
 		xhr.open("GET", "./grid_files/" + file + ".xml");
 		xhr.responseType = "document";
 		xhr.overrideMimeType("text/xml");
-		xhr.onload = function ()
-		{
-			if(xhr.readyState === xhr.DONE && xhr.status == 200)
-			{
+		xhr.onload = function () {
+			if(xhr.readyState === xhr.DONE && xhr.status == 200) {
 				var xml = xhr.responseXML;
 				var xml_grid = xml.children[0];
-				for (var i = 0 ; i < xml_grid.children.length ; i++)
-				{
+				for (var i = 0 ; i < xml_grid.children.length ; i++) {
 					var current_element = xml_grid.children[i];
 					if (current_element.nodeName == "cell") {
 						var x = current_element.attributes.x.value;
@@ -565,6 +591,31 @@ class Grid {
 			}
 		}
 		xhr.send();
+	}
+
+	loadGridList() {
+		this.grids_infos = new Array();
+		var xhr = new XMLHttpRequest();
+		xhr.open("GET", "./grid_files/list.xml", false);
+		xhr.overrideMimeType("text/xml");
+		xhr.onload = function () {
+			if(xhr.readyState === xhr.DONE && xhr.status == 200) {
+				var xml = xhr.responseXML;
+				var grid_list = xml.children[0];
+				for (var i = 0 ; i < grid_list.children.length ; i++) {
+					var current_element = grid_list.children[i];
+					var title = current_element.children[0].innerHTML;
+					var file = current_element.children[1].innerHTML;
+					var description = current_element.children[2].innerHTML;
+					Grid.instance.grids_infos.push([title,file,description]);
+				}
+			}
+		}
+		xhr.send();
+	}
+
+	openPresetPage(i) {
+		window.open("./?id="+this.grids_infos[i][1], "_self");
 	}
 }
 
@@ -617,8 +668,7 @@ function onKeyDown(event_key) {
 		default:
 			break;
 	}
-	for (var i = 48 ; i <= 57 ; i++)
-	{
+	for (var i = 48 ; i <= 57 ; i++) {
 		if (event_key.keyCode == i) {
 			Grid.instance.onButtonNumberPress(i-48);
 			event_key.preventDefault();

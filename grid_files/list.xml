@@ -1,0 +1,12 @@
+<grids>
+	<grid>
+		<name>Test grid</name>
+		<file>test</file>
+		<description>A test grid, will be removed</description>
+	</grid>
+	<grid>
+		<name>Second test</name>
+		<file>test2</file>
+		<description>A second test grid, which I suspect to be just as impossible as the first one</description>
+	</grid>
+</grids>
